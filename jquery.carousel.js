@@ -30,6 +30,7 @@
     var controlItems, slides;
     var current, min, max, dx, cx;
 
+    current = options.current;
     controlItems = this.find(options.controlItem);
 
     $mask = this.find(options.mask).first();
@@ -50,12 +51,29 @@
     min = 0;
     max = Math.ceil(cx / dx) - 1;
 
+    // Check to see whether a slide is defined as active in mark-up
+    if (current === defaults.current) {
+      var $active, $slide;
+      var perFrame, index;
+
+      $active = $content.find(options.slide + '.active');
+
+      if (!$active.length) {
+        return;
+      }
+
+      $slide   = slides.first();
+      perFrame = Math.floor(dx / $slide.outerWidth());
+      index    = slides.index($slide);
+      current  = Math.ceil((index + 1) / perFrame);
+    }
+
     // Methods
     //-----------------------------------------------
     function _onControlClick(event) {
       event.preventDefault();
 
-      setCurrent(controlItems.index(this));
+      setCurrent(controlItems.index(event.currentTarget));
     }
 
     /**
@@ -93,7 +111,7 @@
         $(activeControl).addClass('active');
       }
 
-      $content.animate({left: current * dx * -1});
+      $content.animate({left: current * dx * -1}, 'slow');
     }
 
     // Initialise
@@ -102,7 +120,9 @@
     $btnNext.on('click', _onNavClick);
     $controls.on('click', options.controlItem, _onControlClick);
 
-    setCurrent(options.current);
+    $(window).one('load', function () {
+      setCurrent(current);
+    });
   };
 
 })(jQuery);
