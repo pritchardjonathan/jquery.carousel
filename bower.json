@@ -1,0 +1,13 @@
+{
+  "name": "jquery-carousel",
+  "version": "0.0.2",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "jquery": "1.10.0"
+  },
+  "devDependencies": {
+  }
+}
