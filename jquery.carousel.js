@@ -5,6 +5,9 @@
  */
 
 (function ($) {
+
+  'use strict';
+
   /**
    * Constructor
    * @param [options]
@@ -13,6 +16,8 @@
     var defaults = {
       btnPrev    : '[data-click=carousel-prev]',
       btnNext    : '[data-click=carousel-next]',
+      mask       : '[data-role=carousel-mask]',
+      content    : '[data-role=carousel-content]',
       slide      : '[data-role=carousel-slide]',
       controls   : '[data-role=carousel-controls]',
       controlItem: '[data-role=carousel-control]',
@@ -21,29 +26,31 @@
 
     options = $.extend({}, defaults, options);
 
-    var $controls, $btnPrev, $btnNext, $slideWrap;
+    var $controls, $btnPrev, $btnNext, $mask, $content;
     var controlItems, slides;
-    var current, min, max, dx;
+    var current, min, max, dx, cx;
 
-    slides = this.find(options.slide);
     controlItems = this.find(options.controlItem);
 
-    $slideWrap = $(slides[0]).parent();
+    $mask = this.find(options.mask).first();
+    $content = this.find(options.content).first();
     $btnPrev = this.find(options.btnPrev).first();
     $btnNext = this.find(options.btnNext).first();
     $controls = this.find(options.controls).first();
 
+    cx = 0;
+    slides = this.find(options.slide);
+    slides.each(function(index, el){
+      cx += $(el).outerWidth();
+    });
+
+    $content.css({width: cx});
+
+    dx = $mask.outerWidth();
     min = 0;
-    max = slides.length - 1;
-    dx = this.outerWidth();
+    max = Math.ceil(cx / dx) - 1;
 
-    $btnPrev.on('click', _onNavClick);
-    $btnNext.on('click', _onNavClick);
-    $controls.on('click', options.controlItem, _onControlClick);
-
-    // Initialise
-    $slideWrap.css({width: dx * slides.length});
-    setCurrent(options.current);
+    console.log('max',max)
 
     // Methods
     //-----------------------------------------------
@@ -62,7 +69,7 @@
       event.preventDefault();
 
       var dir, cur;
-      dir = $(this).data('click') === 'carousel-next' ? 1 : -1;
+      dir = $(event.currentTarget).data('click') === 'carousel-next' ? 1 : -1;
       cur = current + dir;
 
       setCurrent(cur);
@@ -77,8 +84,8 @@
       var activeControl;
 
       current = cur;
-      if (current < min) current = min;
-      if (current >= max) current = max;
+      if (current < min)  { current = min; }
+      if (current >= max) { current = max; }
 
       current === min ? $btnPrev.addClass('inactive') : $btnPrev.removeClass('inactive');
       current === max ? $btnNext.addClass('inactive') : $btnNext.removeClass('inactive');
@@ -88,8 +95,16 @@
         $(activeControl).addClass('active');
       }
 
-      $slideWrap.animate({left: current * dx * -1});
+      $content.animate({left: current * dx * -1});
     }
+
+    // Initialise
+    // Add event handlers
+    $btnPrev.on('click', _onNavClick);
+    $btnNext.on('click', _onNavClick);
+    $controls.on('click', options.controlItem, _onControlClick);
+
+    setCurrent(options.current);
   };
 
 })(jQuery);
