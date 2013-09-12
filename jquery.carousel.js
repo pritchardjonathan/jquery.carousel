@@ -50,8 +50,6 @@
     min = 0;
     max = Math.ceil(cx / dx) - 1;
 
-    console.log('max',max)
-
     // Methods
     //-----------------------------------------------
     function _onControlClick(event) {
