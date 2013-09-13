@@ -64,8 +64,8 @@
 
       $slide   = slides.first();
       perFrame = Math.floor(dx / $slide.outerWidth());
-      index    = slides.index($slide);
-      current  = Math.ceil((index + 1) / perFrame);
+      index    = slides.index($active);
+      current  = Math.floor((index + 1) / perFrame);
     }
 
     // Methods
@@ -120,6 +120,7 @@
     $btnNext.on('click', _onNavClick);
     $controls.on('click', options.controlItem, _onControlClick);
 
+    // Display correct "frame" on window.load
     $(window).one('load', function () {
       setCurrent(current);
     });
