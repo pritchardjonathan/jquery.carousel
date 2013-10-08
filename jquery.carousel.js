@@ -58,9 +58,7 @@
 
       $active = $content.find(options.slide + '.active');
 
-      if (!$active.length) {
-        return;
-      }
+      
 
       $slide   = slides.first();
       perFrame = Math.floor(dx / $slide.outerWidth());
